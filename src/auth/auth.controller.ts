@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Res } from "@nestjs/common";
-import { createUserDto } from "./auth.dto";
+import { createUserDto, loginDto } from "./auth.dto";
 import { createUserResult } from "./interfaces";
 import { auth as authService } from "./auth.service";
 import { Response as responseType } from "express";
@@ -21,8 +21,14 @@ export class auth {
     }
 
     @Post('login')
-    async login() {
+    async login(@Body() body: loginDto, @Res({ passthrough: true }) response: responseType): Promise<createUserResult | any> {
+        const createUser = await this.authService.login(body.email, body.password);
+        response.cookie("authCookie", createUser.authCookie);
 
+        response.status(200).json({
+            email: createUser.email,
+            authToken: createUser.authToken
+        })
     }
 }
 

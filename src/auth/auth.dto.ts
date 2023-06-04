@@ -11,5 +11,15 @@ export class createUserDto {
     password: string
 
     @IsNotEmpty()
-    profileImage:string
+    profileImage: string
+}
+
+export class loginDto {
+    @IsEmail()
+    email: string
+
+    @IsNotEmpty()
+    @MaxLength(20)
+    @MinLength(4)
+    password: string
 }
