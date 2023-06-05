@@ -5,7 +5,6 @@ export class Jwt {
         private jwtService: JwtService
     ) { }
 
-
     async SignAuthToken(id: string, email: string): Promise<string> {
         const token = await this.jwtService.signAsync({ id: id, email: email });
         return token;
