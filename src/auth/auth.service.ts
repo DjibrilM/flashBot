@@ -44,9 +44,10 @@ export class auth {
         }
     }
 
-    async login(password: string, email: string) {
+    async login(email: string, password: string,) {
         //find account 
         const user = await this.userModel.findOne({ email: email });
+
         if (!user) {
             throw new ForbiddenException("user with this email does not exist");
         }

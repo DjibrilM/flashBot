@@ -13,6 +13,8 @@ export class Chat {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User", required: true })
     owner: User;
 
+    @Prop({ required: true })
+    name: string
 
     @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }])
     message: Message[]
