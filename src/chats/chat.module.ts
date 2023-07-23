@@ -6,7 +6,6 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { ChatController } from './chat.controller'
 import { ChatService } from "./chat.service";
 import { AuthorizationGuard } from "src/guards/authorization.guards";
-import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 
 
@@ -18,7 +17,7 @@ import { JwtModule } from "@nestjs/jwt";
         JwtModule.register({ secret: process.env.JWT_SECRET, })
     ],
     controllers: [ChatController],
-    providers: [ChatService, { provide: APP_GUARD, useClass: AuthorizationGuard }]
+    providers: [ChatService]
 })
 
 export class ChatModule { }

@@ -7,6 +7,9 @@ import { createUserProviderResult } from "./interfaces";
 import { hashPassword, compare } from "src/helpers/bcrypt";
 import { JwtService } from '@nestjs/jwt';
 import { Jwt } from "src/helpers/jwt";
+import { Email } from "src/helpers/email";
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class auth {
@@ -22,11 +25,15 @@ export class auth {
 
         //try to create user
         const hashedPassword = await hashPassword(password);
+        const verificationId = uuidv4();
+
         try {
             const createUser = await this.userModel.create({
                 email: email,
                 password: hashedPassword,
-                profileImage: profileImage
+                profileImage: profileImage,
+                confirmed: false,
+                confirmationToken: verificationId,
             });
 
             const jw = new Jwt(this.jwtService);
@@ -36,7 +43,9 @@ export class auth {
             return {
                 email: createUser.email,
                 authCookie: cookieToken,
-                authToken: authToken
+                authToken: authToken,
+                id: createUser.id,
+                profileImage: createUser.profileImage
             }
         } catch (error) {
             console.log(error)
@@ -45,7 +54,7 @@ export class auth {
     }
 
     async login(email: string, password: string,) {
-        //find account 
+        //find account
         const user = await this.userModel.findOne({ email: email });
 
         if (!user) {
@@ -69,4 +78,24 @@ export class auth {
         }
 
     }
+
+    async verifyToken(authCookie: string, autToken: string) {
+        const jwt = new Jwt(this.jwtService);
+        try {
+            const verifyAuthToken = await jwt.veryToken(autToken);
+            const verifyCookieToken = await jwt.veryToken(authCookie);
+            if (verifyAuthToken.id !== verifyCookieToken.id) throw new Error("wrong token");
+
+            const user = await this.userModel.findById(verifyAuthToken.id);
+
+            return {
+                profileImage: user.profileImage,
+                id: user._id,
+            };
+        } catch (error) {
+            console.log(error);
+            throw new UnauthorizedException(error.message);
+        }
+    }
+
 }

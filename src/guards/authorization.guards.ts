@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Jwt } from 'src/helpers/jwt';
 
-
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
     constructor(private jwtService: JwtService) { }
@@ -34,8 +33,7 @@ export class AuthorizationGuard implements CanActivate {
             request['user'] = payload.id;
 
         } catch (error) {
-            console.log(error);
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("unauthorized");
         }
 
         return true;

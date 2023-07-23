@@ -8,7 +8,10 @@ import { ChatModule } from './chats/chat.module';
 
 
 @Module({
-  imports: [ConfigModule.forRoot(), MongooseModule.forRoot(process.env.DATA_URL), auth, ChatModule],
+  imports: [ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.DATA_URL),
+    auth,
+    ChatModule],
   controllers: [AppController],
   providers: [AppService],
 })

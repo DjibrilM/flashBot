@@ -4,6 +4,9 @@ import { Model } from "mongoose";
 import { Chat } from "src/database/schemas/chats.schema";
 import { Message } from "src/database/schemas/message.schema";
 import mongoose from "mongoose";
+const { Configuration, OpenAIApi } = require("openai");
+
+
 
 @Injectable()
 export class ChatService {
@@ -25,7 +28,8 @@ export class ChatService {
         try {
             const getChats = await this.chatModel.find({
                 owner: owner
-            });
+            }).populate("messages");
+
             return getChats;
         } catch (error) {
             throw new InternalServerErrorException("can't load chats")
@@ -49,12 +53,34 @@ export class ChatService {
     }
 
     async createMessage(chatId: string, owner: string) {
-        const createMessage = await this.messageModel.create(
-            {
-                owner: owner,
-                chatId: chatId
-            }
-        );
-        return chatId;
+
+        try {
+
+            const configuration = new Configuration({
+                organization: "org-IViR4SfY8HJAWD8rGBjTOH1p",
+                apiKey: "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",
+            });
+            const openai = new OpenAIApi(configuration);
+
+            const completion = await openai.createChatCompletion({
+                model: "gpt-3.5-turbo",
+                max_tokens: 3000,
+                temperature: 0,
+                messages: [{ role: "user", content: "He" }],
+            });
+            console.log(completion.data.choices[0].message);
+
+            // const createMessage = await this.messageModel.create(
+            //     {
+            //         owner: owner,
+            //         chatId: chatId
+            //     }
+            // );
+        } catch (error) {
+            console.log(error.message);
+            throw new InternalServerErrorException(error.message)
+        }
+
+
     }
 }
