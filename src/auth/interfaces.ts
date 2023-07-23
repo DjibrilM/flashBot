@@ -7,4 +7,6 @@ export interface createUserProviderResult {
     email: string,
     authToken: string,
     authCookie: string,
+    id: string,
+    profileImage: string
 }
