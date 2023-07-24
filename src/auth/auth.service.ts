@@ -60,6 +60,7 @@ export class auth {
         if (!user) {
             throw new ForbiddenException("user with this email does not exist");
         }
+
         //compare password
         const comparePassword = await compare(user.password, password);
         if (!comparePassword) {
@@ -74,7 +75,8 @@ export class auth {
         return {
             email: user.email,
             authCookie: cookieToken,
-            authToken: authToken
+            authToken: authToken,
+            profileImage: user.profileImage,
         }
 
     }
