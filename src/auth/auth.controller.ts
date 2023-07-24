@@ -38,13 +38,13 @@ export class auth {
         const createUser = await this.authService.login(body.email, body.password);
         response.cookie("authCookie", createUser.authCookie, {
             httpOnly: true,
-            sameSite: "none",
-            secure: false
+            sameSite: false
         });
-        
+
         response.status(200).json({
             email: createUser.email,
-            authToken: createUser.authToken
+            authToken: createUser.authToken,
+            profileImage: createUser.profileImage,
         })
     }
 }
