@@ -11,26 +11,30 @@ const { Configuration, OpenAIApi } = require("openai");
 @Injectable()
 export class ChatService {
     constructor(@InjectModel(Chat.name) private chatModel: Model<Chat>, @InjectModel(Message.name) private messageModel: Model<Message>) { }
-    async createChat(owner: string, name: string) {
+    async createChat(owner: string) {
         try {
             const newChat = await this.chatModel.create({
                 owner: owner,
-                name: name
             });
 
             return newChat;
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException();
         }
     };
 
-    async getChats(owner: string) {
+    async getChats(owner: string, skip: number) {
         try {
             const getChats = await this.chatModel.find({
                 owner: owner
-            }).populate("messages");
+            }).skip((skip - 1) * 4).limit(4).populate("messages");
 
-            return getChats;
+            const itemCount = await this.chatModel.find({
+                owner: owner
+            }).count();
+
+            return { chats: getChats, itemsCount: itemCount };
         } catch (error) {
             throw new InternalServerErrorException("can't load chats")
         }

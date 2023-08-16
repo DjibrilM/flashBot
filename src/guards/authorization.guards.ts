@@ -27,13 +27,13 @@ export class AuthorizationGuard implements CanActivate {
             const cookiePayload = await jwt.veryToken(cookies);
 
             if (payload.id !== cookiePayload.id) {
-                throw new UnauthorizedException();
+                throw new Error('Wrong crediential');
             }
 
             request['user'] = payload.id;
 
         } catch (error) {
-            throw new UnauthorizedException("unauthorized");
+            throw new UnauthorizedException(error.message || "unauthorized");
         }
 
         return true;

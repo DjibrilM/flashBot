@@ -1,7 +1,7 @@
-import { Controller, Post, Get, Delete, UseGuards, Request, Body } from "@nestjs/common";
+import { Controller, Post, Get, Delete, UseGuards, Request, Body, Query } from "@nestjs/common";
 import { ChatService } from "./chat.service";
 import { Request as RequestType } from "express";
-import { createChatDto, createMessageDto, deleteChatDto } from "./chat.dto";
+import { createMessageDto, deleteChatDto } from "./chat.dto";
 import { AuthorizationGuard } from "src/guards/authorization.guards";
 
 
@@ -11,15 +11,14 @@ export class ChatController {
 
     @UseGuards(AuthorizationGuard)
     @Post('chat')
-    async createChat(@Body() body: createChatDto, @Request() request: RequestType | any) {
-        return this.chatService.createChat(request.user, body.chatName)
+    async createChat(@Request() request: RequestType | any,) {
+        return this.chatService.createChat(request.user);
     }
 
     @UseGuards(AuthorizationGuard)
     @Get("chats")
-    async getChats(@Request() request: RequestType | any) {
-        console.log(request.user)
-        return this.chatService.getChats(request.user)
+    async getChats(@Request() request: RequestType | any, @Query('pagination') pagination: number) {
+        return this.chatService.getChats(request.user, pagination);
     }
 
     @UseGuards(AuthorizationGuard)

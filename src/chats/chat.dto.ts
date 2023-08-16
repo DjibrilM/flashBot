@@ -1,10 +1,4 @@
-import { IsNotEmpty, IsAlphanumeric } from "class-validator";
-
-export class createChatDto {
-    @IsNotEmpty()
-    @IsAlphanumeric()
-    chatName: string
-}
+import { IsNotEmpty, IsAlphanumeric, IsOptional, } from "class-validator";
 
 export class createMessageDto {
     @IsNotEmpty()

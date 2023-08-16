@@ -1,9 +1,9 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, HttpException, HttpStatus, RequestTimeoutException } from "@nestjs/common";
 import { InternalServerErrorException, ForbiddenException } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from "../database/schemas/user.schema";
 import { Model } from "mongoose";
-import { createUserProviderResult } from "./interfaces";
+import { createUserProviderResult, requestPasswordUpdateInterface } from "./interfaces";
 import { hashPassword, compare } from "src/helpers/bcrypt";
 import { JwtService } from '@nestjs/jwt';
 import { Jwt } from "src/helpers/jwt";
@@ -90,9 +90,12 @@ export class auth {
 
             const user = await this.userModel.findById(verifyAuthToken.id);
 
+            console.log(user);
+
             return {
                 profileImage: user.profileImage,
                 id: user._id,
+                email: user.email,
             };
         } catch (error) {
             console.log(error);
@@ -100,4 +103,71 @@ export class auth {
         }
     }
 
+
+    async requestpasswordUpdateService(email: string, password: string): Promise<requestPasswordUpdateInterface> {
+        try {
+            const user = await this.userModel.findOne({ email: email });
+
+            if (!user) {
+                const error = new Error("user not found");
+                throw error;
+            }
+
+            const comparePassword = await compare(user.password, password);
+
+            if (!comparePassword) {
+                const error = new Error("🔔 Wrong Password");
+                throw error;
+            }
+
+            return {
+                canUpdate: true
+            }
+        } catch (error) {
+            throw new UnauthorizedException(error.message)
+        }
+    }
+
+    updatePassword = async (email: string, newPassword: string, previousPassword: string) => {
+        try {
+            const user = await this.userModel.findOne({
+                email: email
+            });
+
+            //check if the user exists
+            if (!user) throw new Error("Invalid crediential");
+
+            //compare the previous password once again
+            const comparePassword = await compare(user.password, previousPassword);
+            // if (!comparePassword) throw new Error("Invalid crediential")
+
+            //updatePassword
+            user.password = await hashPassword(newPassword);
+            await user.save();
+
+            return 'password updated';
+        } catch (error) {
+            throw new UnauthorizedException(error.message);
+        }
+    }
+
+    async resetPassword(email: string) {
+        try {
+            const user = await this.userModel.findOne({ email: email })
+            if (!user) {
+                throw Error("user not found");
+            }
+            user.passwordResetKey = await uuidv4();
+            await user.save()
+
+            setTimeout(async () => {
+                user.passwordResetKey = null;
+                await user.save()
+            }, 1000 * 120);
+
+            return 'email sent'
+        } catch (error) {
+
+        }
+    }
 }
