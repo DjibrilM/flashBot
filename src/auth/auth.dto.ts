@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength, MaxLength, isAlphanumeric, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, MinLength, MaxLength, IsString, IS_EMAIL } from "class-validator";
 
 
 
@@ -30,4 +30,26 @@ export class verifyToken {
     @IsString()
     @IsNotEmpty()
     token: string
+}
+
+export class requestPasswordUpdate {
+    @IsNotEmpty()
+    @IsEmail()
+    email: string;
+
+
+    @IsNotEmpty()
+    password: string
+}
+
+export class updatePasswordDto {
+    @IsEmail()
+    email: string
+
+
+    @IsNotEmpty()
+    newPassword: string
+
+    @IsNotEmpty()
+    previousPassword: string
 }

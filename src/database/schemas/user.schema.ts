@@ -12,6 +12,7 @@ export class User {
     password: string;
 
     @Prop()
+    passwordResetKey: string
 
     @Prop({ isRequired: true })
     profileImage: string;

@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, Res, Req, } from "@nestjs/common";
-import { createUserDto, loginDto, verifyToken } from "./auth.dto";
+import { Body, Controller, Get, Post, Res, Req, UseGuards, } from "@nestjs/common";
+import { createUserDto, loginDto, requestPasswordUpdate, verifyToken, updatePasswordDto } from "./auth.dto";
 import { createUserResult } from "./interfaces";
 import { auth as authService } from "./auth.service";
 import { Response as responseType, Request as RequestType } from "express";
+import { requestPasswordUpdateInterface } from "./interfaces";
+import { AuthorizationGuard } from "src/guards/authorization.guards";
 
 @Controller('auth')
 export class auth {
@@ -16,7 +18,7 @@ export class auth {
             sameSite: false
         });
 
-        response.status(201).json({
+        return response.status(201).json({
             email: createUser.email,
             authToken: createUser.authToken,
             id: createUser.id,
@@ -27,9 +29,7 @@ export class auth {
     @Post("verifyToken")
     verifyToken(@Body() body: verifyToken, @Req() request: RequestType) {
         const authenticationCookie = request.cookies.authCookie;
-        console.log(authenticationCookie);
         const authenticationToken = body.token;
-
         return this.authService.verifyToken(authenticationCookie, authenticationToken);
     }
 
@@ -41,11 +41,28 @@ export class auth {
             sameSite: false
         });
 
-        response.status(200).json({
+        return response.status(200).json({
             email: createUser.email,
             authToken: createUser.authToken,
             profileImage: createUser.profileImage,
         })
+    }
+
+    @UseGuards(AuthorizationGuard)
+    @Post('requestPasswordUpdate')
+    requestPasswordUpdate(@Body() body: requestPasswordUpdate): requestPasswordUpdateInterface | unknown {
+        return this.authService.requestpasswordUpdateService(body.email, body.password)
+    }
+
+    @UseGuards(AuthorizationGuard)
+    @Post('updatePassword')
+    updatePassword(@Body() body: updatePasswordDto): Promise<string> {
+        return this.authService.updatePassword(body.email, body.newPassword, body.previousPassword);
+    }
+
+    @Post("restPassword")
+    areset() {
+        
     }
 }
 
