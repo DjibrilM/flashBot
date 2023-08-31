@@ -24,7 +24,7 @@ export class ChatService {
         }
     };
 
-    async getChats(owner: string, skip: number) {
+    async getChats(owner: string, skip: number) {        
         try {
             const getChats = await this.chatModel.find({
                 owner: owner
@@ -61,8 +61,7 @@ export class ChatService {
         try {
 
             const configuration = new Configuration({
-                organization: "org-IViR4SfY8HJAWD8rGBjTOH1p",
-                apiKey: "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",
+                apiKey: "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",
             });
             const openai = new OpenAIApi(configuration);
 
@@ -70,7 +69,7 @@ export class ChatService {
                 model: "gpt-3.5-turbo",
                 max_tokens: 3000,
                 temperature: 0,
-                messages: [{ role: "user", content: "He" }],
+                messages: [{ role: "user", content: "teach the basic on nest js with some code and explanations" }],
             });
             console.log(completion.data.choices[0].message);
 

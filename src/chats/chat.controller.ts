@@ -27,9 +27,8 @@ export class ChatController {
         return this.chatService.deleteChat(body.chatId, request.user,);
     }
 
-    @UseGuards(AuthorizationGuard)
     @Post('message')
-    async postMessage(@Body() body: createMessageDto, @Request() request: RequestType) {
+    async postMessage() {
         return this.chatService.createMessage("d", "d");
     }
 
