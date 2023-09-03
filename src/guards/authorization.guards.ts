@@ -10,6 +10,7 @@ import { Jwt } from 'src/helpers/jwt';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
+    
     constructor(private jwtService: JwtService) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean | any> {
@@ -18,6 +19,7 @@ export class AuthorizationGuard implements CanActivate {
         const cookies = request.cookies.authCookie;
 
         if (!token) {
+            console.log(token);
             throw new UnauthorizedException();
         }
 
@@ -29,7 +31,6 @@ export class AuthorizationGuard implements CanActivate {
             if (payload.id !== cookiePayload.id) {
                 throw new Error('Wrong crediential');
             }
-
             request['user'] = payload.id;
 
         } catch (error) {

@@ -22,14 +22,15 @@ export class ChatController {
     }
 
     @UseGuards(AuthorizationGuard)
-    @Delete("chat")
+    @Post("delete-chat")
     deleteChat(@Body() body: deleteChatDto, @Request() request: RequestType | any) {
         return this.chatService.deleteChat(body.chatId, request.user,);
     }
 
+    @UseGuards(AuthorizationGuard)
     @Post('message')
-    async postMessage() {
-        return this.chatService.createMessage("d", "d");
+    async postMessage(@Body() createMessage: createMessageDto,  @Request() request: RequestType | any) {
+        return this.chatService.createMessage(createMessage.chatId, request.user, createMessage.prompt);
     }
 
     @UseGuards(AuthorizationGuard)

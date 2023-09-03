@@ -4,8 +4,7 @@ import { Model } from "mongoose";
 import { Chat } from "src/database/schemas/chats.schema";
 import { Message } from "src/database/schemas/message.schema";
 import mongoose from "mongoose";
-const { Configuration, OpenAIApi } = require("openai");
-
+import { openAiHelper } from "src/helpers/openai";
 
 
 @Injectable()
@@ -44,6 +43,11 @@ export class ChatService {
     async deleteChat(chatId: string, ownerId: any) {
         try {
             const findChat = await this.chatModel.findById(new mongoose.Types.ObjectId(chatId));
+            if (!findChat) {
+                console.log("chat not found !")
+                throw new Error("Chat not found");
+            } 
+
             if (findChat.owner.toString() !== ownerId) {
                 throw new UnauthorizedException();
             }
@@ -51,39 +55,27 @@ export class ChatService {
             return "Chat deleted";
 
         } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(error);
         }
     }
 
-    async createMessage(chatId: string, owner: string) {
-
+    async createMessage(chatId: string, owner: string, prompt:string) {
         try {
-
-            const configuration = new Configuration({
-                apiKey: "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",
+            const openai = new openAiHelper().createMessage;
+            const sendRequest = await openai(prompt);
+            console.log(sendRequest);
+            const createMessage = await this.messageModel.create({
+                owner: owner,
+                chatId: chatId,
+                prompt: prompt,
+                result: sendRequest
             });
-            const openai = new OpenAIApi(configuration);
 
-            const completion = await openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
-                max_tokens: 3000,
-                temperature: 0,
-                messages: [{ role: "user", content: "teach the basic on nest js with some code and explanations" }],
-            });
-            console.log(completion.data.choices[0].message);
+            return createMessage;
 
-            // const createMessage = await this.messageModel.create(
-            //     {
-            //         owner: owner,
-            //         chatId: chatId
-            //     }
-            // );
         } catch (error) {
             console.log(error.message);
             throw new InternalServerErrorException(error.message)
         }
-
-
     }
 }
