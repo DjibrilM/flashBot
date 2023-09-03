@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsAlphanumeric, IsOptional, } from "class-validator";
+import { IsNotEmpty, IsAlphanumeric, } from "class-validator";
 
 export class createMessageDto {
     @IsNotEmpty()
     chatId: string
 
     @IsNotEmpty()
-    ownerId: string
+    prompt:string
 }
 
 export class deleteChatDto {

@@ -1,23 +1,31 @@
-const { Configuration, OpenAIApi } = require("openai");
+import { OpenAI } from "openai";
 
-
-export class openAi {
+export class openAiHelper {
     async createMessage(prompt: string) {
         try {
-            const configuration = new Configuration({
-                apiKey: process.env.OPENAI_API_KEY,
-            });
-            const openai = new OpenAIApi(configuration);
 
-            const completion = await openai.createChatCompletion({
+            const openai = new OpenAI({
+                apiKey: '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'
+            });
+            
+            openai.chat.completions.create({
                 model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: "Hello world" }],
+                max_tokens: 3000,
+                temperature: 0,
+                messages: [{ role: "user", content: prompt }],
             });
-            console.log(completion.data.choices[0].message);
 
+            const completion = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                max_tokens: 3000,
+                temperature: 0,
+                messages: [{ role: "user", content: prompt }],
+            });
+
+            return completion.choices[0].message;
         } catch (error) {
-            console.log(error.message);
-            throw new Error("Internal server error !")
+            console.log(error);
+            throw new Error("Failed to reach openai chack your api-key");
         }
 
     }
