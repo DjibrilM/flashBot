@@ -5,7 +5,7 @@ export class openAiHelper {
         try {
 
             const openai = new OpenAI({
-                apiKey: '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'
+                apiKey: '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'
             });
             
             openai.chat.completions.create({
