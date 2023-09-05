@@ -6,6 +6,9 @@ import { Response as responseType, Request as RequestType } from "express";
 import { requestPasswordUpdateInterface } from "./interfaces";
 import { AuthorizationGuard } from "src/guards/authorization.guards";
 
+
+
+
 @Controller('auth')
 export class auth {
     constructor(private readonly authService: authService) { }
