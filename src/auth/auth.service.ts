@@ -7,13 +7,14 @@ import { createUserProviderResult, requestPasswordUpdateInterface } from "./inte
 import { hashPassword, compare } from "src/helpers/bcrypt";
 import { JwtService } from '@nestjs/jwt';
 import { Jwt } from "src/helpers/jwt";
-import { Email } from "src/helpers/email";
 import { v4 as uuidv4 } from 'uuid';
+import { Chat } from "src/database/schemas/chats.schema";
+import { Message } from "src/database/schemas/message.schema";
 
 
 @Injectable()
 export class auth {
-    constructor(@InjectModel(User.name) private userModel: Model<User>, private jwtService: JwtService) { }
+    constructor(@InjectModel(User.name) private userModel: Model<User>, private jwtService: JwtService, @InjectModel(Chat.name) private chatModel: Model<Chat>, @InjectModel(Message.name) private messageModel: Model<Message>) { }
 
     async create(email: string, password: string, profileImage: string): Promise<createUserProviderResult> {
         //check id user already exist
@@ -48,7 +49,6 @@ export class auth {
                 profileImage: createUser.profileImage
             }
         } catch (error) {
-            console.log(error)
             throw new InternalServerErrorException("server error");
         }
     }
@@ -90,7 +90,6 @@ export class auth {
 
             const user = await this.userModel.findById(verifyAuthToken.id);
 
-            console.log(user);
 
             return {
                 profileImage: user.profileImage,
@@ -168,6 +167,29 @@ export class auth {
             return 'email sent'
         } catch (error) {
 
+        }
+    }
+
+    async deleteAccount(email: string, password: string, id: string) {
+        try {
+            const findUser = await this.userModel.findById(id);
+            const comparePassword = await compare(findUser.password, password);
+            if (!comparePassword) {
+                throw new Error("wrong password")
+            }
+
+            //delete all message attached to the user 
+             await this.messageModel.deleteMany({ owner: id });
+            //delete chats 
+            await this.chatModel.deleteMany({ owner: id });
+
+             await this.userModel.findOneAndRemove({ email: email });
+
+
+            return 'your account has been deleted with all your data...'
+        } catch (error) {
+            console.log(error, 'failed to delete accout data');
+            throw new UnauthorizedException(error.message);
         }
     }
 }

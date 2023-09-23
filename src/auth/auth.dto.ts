@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength, MaxLength, IsString, IS_EMAIL } from "class-validator";
+import { IsEmail, IsNotEmpty, MinLength, MaxLength, IsString, IS_EMAIL, isEmail } from "class-validator";
 
 
 
@@ -52,4 +52,13 @@ export class updatePasswordDto {
 
     @IsNotEmpty()
     previousPassword: string
+}
+
+export class DeleteUserDto {
+    @IsEmail()
+    email: string
+    
+    @IsNotEmpty()
+    password: string
+
 }
