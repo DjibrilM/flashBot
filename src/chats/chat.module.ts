@@ -5,8 +5,8 @@ import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ChatController } from './chat.controller'
 import { ChatService } from "./chat.service";
-import { AuthorizationGuard } from "src/guards/authorization.guards";
 import { JwtModule } from "@nestjs/jwt";
+
 
 
 @Module({

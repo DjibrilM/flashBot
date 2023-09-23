@@ -1,13 +1,10 @@
-import { Body, Controller, Get, Post, Res, Req, UseGuards, } from "@nestjs/common";
-import { createUserDto, loginDto, requestPasswordUpdate, verifyToken, updatePasswordDto } from "./auth.dto";
+import { Body, Controller, Request, Post, Res, Req, UseGuards, } from "@nestjs/common";
+import { createUserDto, loginDto, requestPasswordUpdate, verifyToken, updatePasswordDto, DeleteUserDto } from "./auth.dto";
 import { createUserResult } from "./interfaces";
 import { auth as authService } from "./auth.service";
 import { Response as responseType, Request as RequestType } from "express";
 import { requestPasswordUpdateInterface } from "./interfaces";
 import { AuthorizationGuard } from "src/guards/authorization.guards";
-
-
-
 
 @Controller('auth')
 export class auth {
@@ -63,9 +60,10 @@ export class auth {
         return this.authService.updatePassword(body.email, body.newPassword, body.previousPassword);
     }
 
-    @Post("restPassword")
-    areset() {
-        
+    @UseGuards(AuthorizationGuard)
+    @Post("deleteAccount")
+    async areset(@Body() body: DeleteUserDto, @Request() request: RequestType | any) {
+        return this.authService.deleteAccount(body.email, body.password, request.user);
     }
 }
 

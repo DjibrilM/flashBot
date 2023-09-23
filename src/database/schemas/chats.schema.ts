@@ -4,8 +4,6 @@ import * as mongoose from 'mongoose';
 import { User } from "./user.schema";
 import { Message } from "./message.schema";
 
-
-
 export type ChatDocument = HydratedDocument<Chat>;
 
 @Schema({ timestamps: true })
@@ -13,7 +11,7 @@ export class Chat {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User", required: true })
     owner: User;
 
-    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }])
+    @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: "Message",required: true }])
     messages: Message[]
 }
 
