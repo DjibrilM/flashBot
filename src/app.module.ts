@@ -9,7 +9,7 @@ import { ChatModule } from './chats/chat.module';
 
 @Module({
   imports: [ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DATA_URL),
+  MongooseModule.forRoot('mongodb+srv://djibrilM:HBrwLsny39855ETc@cluster0.gs4twcs.mongodb.net/?retryWrites=true&w=majority'),
     auth,
     ChatModule],
   controllers: [AppController],
