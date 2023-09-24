@@ -14,7 +14,7 @@ export class auth {
     async createUser(@Body() body: createUserDto, @Res({ passthrough: true }) response: responseType): Promise<createUserResult | any> {
         const createUser = await this.authService.create(body.email, body.password, body.profileImage);
         response.cookie("authCookie", createUser.authCookie, {
-            httpOnly: true,
+            httpOnly: false,
             sameSite: false
         });
 
@@ -37,7 +37,7 @@ export class auth {
     async login(@Body() body: loginDto, @Res({ passthrough: true }) response: responseType): Promise<createUserResult | any> {
         const createUser = await this.authService.login(body.email, body.password);
         response.cookie("authCookie", createUser.authCookie, {
-            httpOnly: true,
+            httpOnly: false,
             sameSite: false
         });
 
