@@ -1,4 +1,6 @@
 
+
+
 export const emailVerificationTemplate = (verificationKey: string): string => {
     const template = `  <!DOCTYPE html>
     <html lang="en">
