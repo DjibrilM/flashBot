@@ -7,8 +7,6 @@ export class createMessageDto {
     @IsNotEmpty()
     prompt:string
 }
-
-
 export class deleteChatDto {
     @IsNotEmpty()
     chatId: string
