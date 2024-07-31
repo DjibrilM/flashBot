@@ -6,13 +6,13 @@ export class Email {
         try {
             const request = await axios.post("https://api.brevo.com/v3/smtp/email", {
                 sender: {
-                    "name": "djebel morgan",
-                    "email": "mugishodjibril7@gmail.com"
+                    "name": "",
+                    "email": ""
                 },
                 to: [
                     {
-                        email: email,
-                        name: "elkan Doe"
+                        email: "",
+                        name: ""
                     }
                 ],
                 subject: "Hello world",
